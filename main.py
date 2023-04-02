@@ -36,7 +36,7 @@ async def get_var():
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     await start_proc('called_script.py')
-    return {"message": "Process started in the background."}
+    return {"message": "Robot started."}
 
 @app.post("/stop/")
 async def stop_robot(api_key: APIKey = Depends(api_key_verification)):

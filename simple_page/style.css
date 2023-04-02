@@ -1,0 +1,28 @@
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  #arrow-keys {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  button {
+    font-size: 80px;
+    padding: 10px 20px;
+    margin: 10px;
+    width: 120px; /* setzt die Breite aller Tasten auf 120px */
+  }
+  
+  #left {
+    margin-right: 20px;
+  }
+  
+  #right {
+    margin-left: 20px;
+  }
