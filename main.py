@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Header, File, UploadFile
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from starlette.status import HTTP_403_FORBIDDEN
 import os
+import asyncio
 import subprocess
 
 '''
@@ -37,9 +38,10 @@ async def get_var():
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     command = ['python3', 'called_script.py']
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
-    return {f"message": {stdout.decode()}}
+    # only take the first output dont wait for the second
+    process = await asyncio.create_subprocess_exec(*command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    asyncio.create_task(process.communicate())
+    return {"message": "Process started in the background."}
 
 
 
