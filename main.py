@@ -5,6 +5,7 @@ import os
 import asyncio
 import subprocess
 from utils.kill_proc import kill_proc
+from utils.start_proc import start_proc
 
 '''
 Start with the following command:
@@ -15,17 +16,14 @@ app = FastAPI()
 API_KEY = os.environ.get("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
-
 async def api_key_verification(api_key_header: str = Depends(api_key_header)):
     if api_key_header is None or api_key_header != API_KEY:
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid API key")
     return api_key_header
 
-
 @app.get("/protected")
 async def protected_route(api_key: APIKey = Depends(api_key_verification)):
     return {"message": "This route is protected"}
-
 
 @app.get("/")
 async def public_route():
@@ -35,18 +33,17 @@ async def public_route():
 async def get_var():
     return os.environ.get("ANOTHER_VAR")
 
-# make a post request to /start/, that triggers a subprocess to start the robot
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
-    command = ['python3', 'called_script.py']
-    process = await asyncio.create_subprocess_exec(*command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    asyncio.create_task(process.communicate())
+    await start_proc('called_script.py')
     return {"message": "Process started in the background."}
 
 @app.post("/stop/")
 async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
-    kill_proc('called_script.py')
-    return {"message": "Robot stopped"}
+    if kill_proc('called_script.py'):
+        return {"message": "Robot stopped."}
+    else:
+        return {"message": "Robot not running."}
 
 # @app.post("/uploadfile/")
 # async def create_upload_file(file: UploadFile | None = None, api_key: APIKey = Depends(api_key_verification)):

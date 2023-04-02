@@ -15,7 +15,7 @@ def kill_proc(name):
     # Kill the process if it was found
     if called_script_pid is not None:
         psutil.Process(called_script_pid).kill()
+        return True
     else:
         print('Process not found')
-
-
+        return False
