@@ -28,13 +28,16 @@ async def protected_route(api_key: APIKey = Depends(api_key_verification)):
 async def public_route():
     return {"message": "This route is public"}
 
+@app.get("/var/")
+async def get_var():
+    return os.environ.get("ANOTHER_VAR")
 
-@app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile | None = None, api_key: APIKey = Depends(api_key_verification)):
-    if not file:
-        return {"message": "No upload file sent"}
-    else:
-        file_path = os.getcwd() + '/' + file.filename
-        with open(file_path, "wb") as buffer:
-            buffer.write(await file.read())
-        return {"filename": file.filename}
+# @app.post("/uploadfile/")
+# async def create_upload_file(file: UploadFile | None = None, api_key: APIKey = Depends(api_key_verification)):
+#     if not file:
+#         return {"message": "No upload file sent"}
+#     else:
+#         file_path = os.getcwd() + '/' + file.filename
+#         with open(file_path, "wb") as buffer:
+#             buffer.write(await file.read())
+#         return {"filename": file.filename}
