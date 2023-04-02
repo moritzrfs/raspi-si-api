@@ -4,6 +4,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 import os
 import asyncio
 import subprocess
+from utils.kill_proc import kill_proc
 
 '''
 Start with the following command:
@@ -38,18 +39,13 @@ async def get_var():
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     command = ['python3', 'called_script.py']
-    # only take the first output dont wait for the second
     process = await asyncio.create_subprocess_exec(*command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     asyncio.create_task(process.communicate())
     return {"message": "Process started in the background."}
 
-
-
-# make a post request to /stop/, that triggers a subprocess to stop the robot
-
-
 @app.post("/stop/")
 async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
+    kill_proc('called_script.py')
     return {"message": "Robot stopped"}
 
 # @app.post("/uploadfile/")
