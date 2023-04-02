@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Header, File, UploadFile
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from starlette.status import HTTP_403_FORBIDDEN
 import os
+import subprocess
 
 '''
 Start with the following command:
@@ -31,6 +32,23 @@ async def public_route():
 @app.get("/var/")
 async def get_var():
     return os.environ.get("ANOTHER_VAR")
+
+# make a post request to /start/, that triggers a subprocess to start the robot
+@app.post("/start/")
+async def start_robot(api_key: APIKey = Depends(api_key_verification)):
+    command = ['python3', 'called_script.py']
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    return {f"message": {stdout.decode()}}
+
+
+
+# make a post request to /stop/, that triggers a subprocess to stop the robot
+
+
+@app.post("/stop/")
+async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
+    return {"message": "Robot stopped"}
 
 # @app.post("/uploadfile/")
 # async def create_upload_file(file: UploadFile | None = None, api_key: APIKey = Depends(api_key_verification)):
