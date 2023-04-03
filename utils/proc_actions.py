@@ -29,8 +29,15 @@ def kill_proc(name):
         return False
 
 def is_process_running(name):
-    for proc in psutil.process_iter(attrs=['name']):
-        # check if contains name
-        if name in proc.info['name']:
-            return True
-    return False
+    python_procs = [p for p in psutil.process_iter(attrs=['pid', 'name']) if p.info['name'] == 'python3']
+
+    called_script_pid = None
+    for proc in python_procs:
+        cmdline = proc.cmdline()
+        if len(cmdline) > 1 and cmdline[1] == name:
+            called_script_pid = proc.pid
+            break
+    if called_script_pid is not None:
+        return True
+    else:
+        return False
