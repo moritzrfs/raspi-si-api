@@ -9,10 +9,8 @@ async def start_proc(script_name):
     asyncio.create_task(process.communicate())
 
 def kill_proc(name):
-    # Get a list of all running Python processes
     python_procs = [p for p in psutil.process_iter(attrs=['pid', 'name']) if p.info['name'] == 'python3']
 
-    # Find the process ID of the script you want to kill
     called_script_pid = None
     for proc in python_procs:
         cmdline = proc.cmdline()
@@ -20,7 +18,6 @@ def kill_proc(name):
             called_script_pid = proc.pid
             break
 
-    # Kill the process if it was found
     if called_script_pid is not None:
         psutil.Process(called_script_pid).kill()
         return True
