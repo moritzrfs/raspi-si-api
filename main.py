@@ -35,6 +35,14 @@ async def get_var():
 
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
+    """
+    Start the robot if it is not already running.
+
+    This endpoint will start the robot if it is not already running.
+    If it is already running, it will return a message saying so.
+    If it is not running, it will start the robot and return a message saying so.
+    """
+
     if is_process_running('called_script.py'):
         return {"message": "Robot already running."}
     else:
@@ -43,6 +51,13 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
 
 @app.post("/stop/")
 async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
+    """
+    Stop the robot if it is running.
+
+    This endpoint will stop the robot if it is running.
+    If it is not running, it will return a message saying so.
+    If it is running, it will stop the robot and return a message saying so.
+    """
     if kill_proc('called_script.py'):
         return {"message": "Robot stopped."}
     else:
@@ -50,6 +65,11 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
 
 @app.get("/status/")
 async def get_status(api_key: APIKey = Depends(api_key_verification)):
+    """
+    Get the status of the robot.
+    
+    This endpoint will return a message saying if the robot is running or not.
+    """
     if is_process_running('called_script.py'):
         return {"message": "Robot running."}
     else:
@@ -68,6 +88,13 @@ async def get_status(api_key: APIKey = Depends(api_key_verification)):
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
+    """
+    Upload a JSON driving instructions file.
+
+    This endpoint allows to upload a JSON file containing driving instructions.
+    It checks if the file is a JSON file and if it is encoded in UTF-8.
+    If the file is valid, it will be saved on the endpoint device.
+    """
     if not file:
         return {"message": "No upload file sent"}
 
