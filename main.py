@@ -48,6 +48,14 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
     else:
         return {"message": "Robot not running."}
 
+@app.get("/status/")
+async def get_status(api_key: APIKey = Depends(api_key_verification)):
+    if is_process_running('called_script.py'):
+        return {"message": "Robot running."}
+    else:
+        return {"message": "Robot not running."}
+    
+
 # @app.post("/uploadfile/")
 # async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
 #     if not file:
