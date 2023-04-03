@@ -2,8 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, Header, File, UploadFile
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from starlette.status import HTTP_403_FORBIDDEN
 import os
-import asyncio
-import subprocess
+from typing import Union
 from utils.kill_proc import kill_proc
 from utils.start_proc import start_proc
 
@@ -46,7 +45,7 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
         return {"message": "Robot not running."}
 
 @app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile | None = None, api_key: APIKey = Depends(api_key_verification)):
+async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
     if not file:
         return {"message": "No upload file sent"}
     else:
