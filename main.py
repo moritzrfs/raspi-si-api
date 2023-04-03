@@ -44,12 +44,25 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
     else:
         return {"message": "Robot not running."}
 
+# @app.post("/uploadfile/")
+# async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
+#     if not file:
+#         return {"message": "No upload file sent"}
+#     else:
+#         file_path = os.getcwd() + '/' + file.filename
+#         with open(file_path, "wb") as buffer:
+#             buffer.write(await file.read())
+#         return {"filename": file.filename}
+
 @app.post("/uploadfile/")
 async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
     if not file:
         return {"message": "No upload file sent"}
-    else:
-        file_path = os.getcwd() + '/' + file.filename
-        with open(file_path, "wb") as buffer:
-            buffer.write(await file.read())
-        return {"filename": file.filename}
+
+    if not file.filename.endswith('.json'):
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JSON files are allowed.")
+
+    file_path = os.getcwd() + '/' + file.filename
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+    return {"filename": file.filename}
