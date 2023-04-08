@@ -4,7 +4,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 import os
 import json
 from typing import Union
-from utils.driving_logic import Robot
+from utils.call_robot import action
 
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
@@ -14,7 +14,7 @@ uvicorn main:app --reload
 '''
 
 app = FastAPI()
-robot = Robot()
+# robot = Robot()
 
 API_KEY = os.environ.get("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -51,7 +51,7 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     # else:
     #     await start_proc('called_script.py')
     #     return {"message": "Robot started."}
-    robot.drive_backwards(2)
+    action()
 
 @app.post("/my_endpoint")
 async def my_endpoint(request: Request):
