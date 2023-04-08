@@ -56,7 +56,7 @@ async def exec_shell(api_key: APIKey = Depends(api_key_verification)):
     Body needs to have a "command" key with 
     the command to be executed as value.
     """
-    body = await api_key_verification()
+    # body = await api_key_verification()
     body = json.loads(body)
     if 'command' in body:
         run_command(body['command'])
