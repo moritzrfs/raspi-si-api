@@ -1,7 +1,7 @@
 import subprocess
 
 def run_command(command):
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if result.returncode == 0:
         print("Command executed successfully:")
