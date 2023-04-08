@@ -49,23 +49,27 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
         await start_proc('called_script.py')
         return {"message": "Robot started."}
 
+@app.post("/my_endpoint")
+async def my_endpoint(request: Request):
+    body = await request.json()
+    my_value = body.get("my_value")
+    return {"message": f"Received request body. My value is: {my_value}"}
+
+
 @app.post("/shell/")
-async def exec_shell(api_key: APIKey = Depends(api_key_verification), request: Request):
+async def exec_shell(request: Request, api_key: APIKey = Depends(api_key_verification)):
     """
     Triggers a shell command.
     Body needs to have a "command" key with 
     the command to be executed as value.
     """
-    # body = await api_key_verification()
-    # body = json.loads(body)
-    # if 'command' in body:
-    #     run_command(body['command'])
-    #     return {"message": "Command executed."}
-    # else:
-    #     return {"message": "No command sent."}
-
     body = await request.json()
-    return {"message": "Received request body", "body": body}
+    if 'command' in body:
+        # run_command(body['command'])
+        return {"message": "Command executed."}
+    else:
+        return {"message": "No command sent."}
+
 
 
 @app.post("/stop/")
