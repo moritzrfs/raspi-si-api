@@ -6,7 +6,7 @@ import json
 from typing import Union
 
 from utils.proc_actions import start_proc, kill_proc, is_process_running
-
+from utils.call_shell import run_command
 '''
 Start with the following command:
 uvicorn main:app --reload
@@ -21,17 +21,17 @@ async def api_key_verification(api_key_header: str = Depends(api_key_header)):
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid API key")
     return api_key_header
 
-@app.get("/protected")
-async def protected_route(api_key: APIKey = Depends(api_key_verification)):
-    return {"message": "This route is protected"}
+# @app.get("/protected")
+# async def protected_route(api_key: APIKey = Depends(api_key_verification)):
+#     return {"message": "This route is protected"}
 
-@app.get("/")
-async def public_route():
-    return {"message": "This route is public"}
+# @app.get("/")
+# async def public_route():
+#     return {"message": "This route is public"}
 
-@app.get("/var/")
-async def get_var():
-    return os.environ.get("ANOTHER_VAR")
+# @app.get("/var/")
+# async def get_var():
+#     return os.environ.get("ANOTHER_VAR")
 
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
@@ -48,6 +48,22 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     else:
         await start_proc('called_script.py')
         return {"message": "Robot started."}
+
+@app.post("/shell/")
+async def exec_shell(api_key: APIKey = Depends(api_key_verification)):
+    """
+    Triggers a shell command.
+    Body needs to have a "command" key with 
+    the command to be executed as value.
+    """
+    body = await api_key_verification()
+    body = json.loads(body)
+    if 'command' in body:
+        run_command(body['command'])
+        return {"message": "Command executed."}
+    else:
+        return {"message": "No command sent."}
+
 
 @app.post("/stop/")
 async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
