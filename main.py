@@ -14,6 +14,7 @@ uvicorn main:app --reload
 '''
 
 app = FastAPI()
+robot = dl.Robot()
 API_KEY = os.environ.get("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
@@ -49,8 +50,7 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     # else:
     #     await start_proc('called_script.py')
     #     return {"message": "Robot started."}
-    robot = dl.Robot()
-    await robot.drive_backwards(2)
+    robot.drive_backwards(2)
 
 @app.post("/my_endpoint")
 async def my_endpoint(request: Request):
