@@ -4,6 +4,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 import os
 import json
 from typing import Union
+import utils.driving_logic as dl
 
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
@@ -43,11 +44,13 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     If it is not running, it will start the robot and return a message saying so.
     """
 
-    if is_process_running('called_script.py'):
-        return {"message": "Robot already running."}
-    else:
-        await start_proc('called_script.py')
-        return {"message": "Robot started."}
+    # if is_process_running('called_script.py'):
+    #     return {"message": "Robot already running."}
+    # else:
+    #     await start_proc('called_script.py')
+    #     return {"message": "Robot started."}
+    robot = dl.Robot()
+    await robot.drive_backwards(2)
 
 @app.post("/my_endpoint")
 async def my_endpoint(request: Request):

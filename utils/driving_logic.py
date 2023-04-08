@@ -66,24 +66,3 @@ class Robot:
                 self.stop()
                 # self.cleanup()
                 break
-
-
-robot = Robot()
-robot.drive_straight(2)
-#robot.turn_left(.5)
-time.sleep(.2)
-robot.turn_left()
-time.sleep(.2)
-robot.turn_right()
-time.sleep(.2)
-robot.drive_backwards(2)
-robot.drive_straight(1)
-#robot.turn_left(.5)
-time.sleep(.2)
-robot.turn_left(.5)
-time.sleep(.2)
-robot.turn_right(2)
-time.sleep(.2)
-robot.drive_backwards(1)
-
-#robot.turn_right()
