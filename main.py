@@ -65,8 +65,8 @@ async def exec_shell(request: Request, api_key: APIKey = Depends(api_key_verific
     """
     body = await request.json()
     if 'command' in body:
-        # run_command(body['command'])
-        return {"message": "Command executed."}
+        message = run_command(body['command'])
+        return {"message": message}
     else:
         return {"message": "No command sent."}
 
