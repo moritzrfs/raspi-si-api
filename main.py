@@ -71,6 +71,20 @@ async def exec_shell(request: Request, api_key: APIKey = Depends(api_key_verific
         return {"message": "No command sent."}
 
 
+@app.post("/shell2/")
+async def exec_shell2(request: Request):
+    """
+    Triggers a shell command.
+    Body needs to have a "command" key with 
+    the command to be executed as value.
+    """
+    body = await request.json()
+    if 'command' in body:
+        command_list = body['command'].split()
+        message = run_command(command_list)
+        return {"message": message}
+    else:
+        return {"message": "No command sent."}
 
 @app.post("/stop/")
 async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
