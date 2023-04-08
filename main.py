@@ -52,6 +52,7 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     #     await start_proc('called_script.py')
     #     return {"message": "Robot started."}
     action()
+    return {"message": "Robot started."}
 
 @app.post("/my_endpoint")
 async def my_endpoint(request: Request):
