@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends, Header, File, UploadFile
+from fastapi import FastAPI, HTTPException, Depends, Header, File, UploadFile, Request
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from starlette.status import HTTP_403_FORBIDDEN
 import os
@@ -50,19 +50,22 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
         return {"message": "Robot started."}
 
 @app.post("/shell/")
-async def exec_shell(api_key: APIKey = Depends(api_key_verification)):
+async def exec_shell(api_key: APIKey = Depends(api_key_verification), request: Request):
     """
     Triggers a shell command.
     Body needs to have a "command" key with 
     the command to be executed as value.
     """
     # body = await api_key_verification()
-    body = json.loads(body)
-    if 'command' in body:
-        run_command(body['command'])
-        return {"message": "Command executed."}
-    else:
-        return {"message": "No command sent."}
+    # body = json.loads(body)
+    # if 'command' in body:
+    #     run_command(body['command'])
+    #     return {"message": "Command executed."}
+    # else:
+    #     return {"message": "No command sent."}
+
+    body = await request.json()
+    return {"message": "Received request body", "body": body}
 
 
 @app.post("/stop/")
