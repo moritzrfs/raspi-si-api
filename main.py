@@ -4,7 +4,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 import os
 import json
 from typing import Union
-# import utils.driving_logic as dl
+from utils.driving_logic import Robot
 
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
@@ -14,7 +14,8 @@ uvicorn main:app --reload
 '''
 
 app = FastAPI()
-# robot = dl.Robot()
+robot = Robot()
+
 API_KEY = os.environ.get("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
