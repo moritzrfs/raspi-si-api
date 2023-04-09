@@ -96,10 +96,12 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
     If it is not running, it will return a message saying so.
     If it is running, it will stop the robot and return a message saying so.
     """
-    if kill_proc('called_script.py'):
-        return {"message": "Robot stopped."}
-    else:
-        return {"message": "Robot not running."}
+    # if kill_proc('called_script.py'):
+    #     return {"message": "Robot stopped."}
+    # else:
+    #     return {"message": "Robot not running."}
+    global stop_flag
+    stop_flag = True
 
 @app.get("/status/")
 async def get_status(api_key: APIKey = Depends(api_key_verification)):
