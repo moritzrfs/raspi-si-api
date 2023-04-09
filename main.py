@@ -80,28 +80,6 @@ async def get_status(api_key: APIKey = Depends(api_key_verification)):
         return {"message": "Robot not running."}
     
 
-# @app.post("/uploadfile/")
-# async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
-#     if not file:
-#         return {"message": "No upload file sent"}
-#     else:
-#         file_path = os.getcwd() + '/' + file.filename
-#         with open(file_path, "wb") as buffer:
-#             buffer.write(await file.read())
-#         return {"filename": file.filename}
-
-# @app.post("/uploadfile/")
-# async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
-#     """
-#     Upload a JSON driving instructions file.
-
-#     This endpoint allows to upload a JSON file containing driving instructions.
-#     """
-#     if not file:
-#         return {"message": "No upload file sent"}
-
-#     filename = await save_file(file)
-#     return {"filename": filename}
 
 @app.post("/uploadfile/")
 async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):

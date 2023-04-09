@@ -5,4 +5,4 @@ stop_flag = False
 
 def action():
     robot = driving_logic.Robot()
-    robot.execute_instructions('instructions.json')
+    robot.execute_instructions('tmp/driving_instructions/instructions.json')
