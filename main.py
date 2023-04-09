@@ -6,27 +6,34 @@ import json
 from typing import Union
 from utils.call_robot import action
 import threading
-
+import time
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
+import utils.driving_logic as driving_logic
 '''
 Start with the following command:
 uvicorn main:app --reload
 '''
-
+t = None
 app = FastAPI()
 
 API_KEY = os.environ.get("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
-stop_flag = False
-robot = None
+
 
 async def api_key_verification(api_key_header: str = Depends(api_key_header)):
     if api_key_header is None or api_key_header != API_KEY:
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid API key")
     return api_key_header
 
-
+def action():
+    robot = driving_logic.Robot()
+    robot.execute_instructions('instructions.json')
+    while True:
+        if stop_flag:
+            robot.cleanup()
+            break
+        time.sleep(0.1)
 
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
@@ -37,9 +44,13 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     If it is already running, it will return a message saying so.
     If it is not running, it will start the robot and return a message saying so.
     """
-    t = threading.Thread(target=action)
-    t.start()
-    return {"message": "Robot started."}
+    global t
+    if not t or not t.is_alive():
+        t = threading.Thread(target=action)
+        t.start()
+        return {"message": "Robot started."}
+    else:
+        return {"message": "Robot is already running."}
 
 @app.post("/my_endpoint")
 async def my_endpoint(request: Request):
@@ -87,9 +98,14 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
     If it is not running, it will return a message saying so.
     If it is running, it will stop the robot and return a message saying so.
     """
-    global stop_flag
-    stop_flag = True
-    return {"message": "Robot stopped."}
+    global t, stop_flag
+    if t and t.is_alive():
+        stop_flag = True
+        t.join()
+        stop_flag = False
+        return {"message": "Robot stopped."}
+    else:
+        return {"message": "Robot is not running."}
 
 @app.get("/status/")
 async def get_status(api_key: APIKey = Depends(api_key_verification)):
