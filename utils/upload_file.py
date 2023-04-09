@@ -1,4 +1,3 @@
-import datetime
 import shutil
 from fastapi import HTTPException, UploadFile
 import os
@@ -25,10 +24,7 @@ import json
 async def save_file(file: UploadFile) -> str:
     # Create the directory if it doesn't exist
     os.makedirs('tmp/driving_instructions/', exist_ok=True)
-
-    # Generate a new filename with the current datetime string
-    dt_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"{dt_str}.json"
+    filename = "instructions.json"
     file_path = os.path.join('tmp/driving_instructions', filename)
 
     # Delete the old file if it exists
