@@ -8,4 +8,5 @@ def action():
     while not stop_flag:
         robot.execute_instructions('instructions.json')
     
+    print("STOPPPED")
     robot.cleanup()
