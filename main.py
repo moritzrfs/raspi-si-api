@@ -91,15 +91,38 @@ async def get_status(api_key: APIKey = Depends(api_key_verification)):
 #             buffer.write(await file.read())
 #         return {"filename": file.filename}
 
+# @app.post("/uploadfile/")
+# async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
+#     """
+#     Upload a JSON driving instructions file.
+
+#     This endpoint allows to upload a JSON file containing driving instructions.
+#     """
+#     if not file:
+#         return {"message": "No upload file sent"}
+
+#     filename = await save_file(file)
+#     return {"filename": filename}
 @app.post("/uploadfile/")
-async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
+async def create_upload_file(file: UploadFile = File(...), api_key: APIKey = Depends(api_key_verification)):
     """
     Upload a JSON driving instructions file.
 
     This endpoint allows to upload a JSON file containing driving instructions.
+    It checks if the file is a JSON file and if it is encoded in UTF-8.
+    If the file is valid, it will be saved on the endpoint device.
     """
     if not file:
         return {"message": "No upload file sent"}
 
-    filename = await save_file(file)
-    return {"filename": filename}
+    if not file.filename.endswith('.json'):
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JSON files are allowed.")
+
+    contents = await file.read()
+    try:
+        json.loads(contents.decode('utf-8'))
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        raise HTTPException(status_code=400, detail="Invalid file encoding. Only UTF-8 encoded JSON files are allowed.")
+
+    file_path = await save_file(file)
+    return {"message": f"File saved at {file_path}."}
