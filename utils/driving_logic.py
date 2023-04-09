@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import time
+import json
 
 class Robot:
     def __init__(self, servo_pin1=12, servo_pin2=5, pwm_freq=50, duty_cycle=0):
@@ -32,15 +33,15 @@ class Robot:
         self.pwm2.ChangeDutyCycle(5)
         self.how_long(seconds)
 
-    def turn_left(self, multiplier=1):
+    def turn_left(self, degree=90):
         self.pwm1.ChangeDutyCycle(5)
         #self.pwm2.ChangeDutyCycle(5)
-        self.how_long(1.2*multiplier) # around 90 degrees
+        self.how_long(1.2*degree/90.0) # around 90 degrees
     
-    def turn_right(self, multiplier=1):
+    def turn_right(self, degree=90):
         #self.pwm1.ChangeDutyCycle(5)
         self.pwm2.ChangeDutyCycle(10)
-        self.how_long(1.2*multiplier) # around 90 degrees
+        self.how_long(1.2*degree/90.0) # around 90 degrees
 
 
     def stop(self):
@@ -66,3 +67,18 @@ class Robot:
                 self.stop()
                 # self.cleanup()
                 break
+    
+    def execute_instructions(self, instructions_file):
+        with open(instructions_file, 'r') as f:
+            instructions = json.load(f)
+        for instruction in instructions['instructions']:
+            action = instruction['action']
+            if action == 'drive_straight':
+                self.drive_straight(instruction['seconds'])
+            elif action == 'drive_backwards':
+                self.drive_backwards(instruction['seconds'])
+            elif action == 'turn_left':
+                self.turn_left(instruction['degree'])
+            elif action == 'turn_right':
+                self.turn_right(instruction['degree'])
+            time.sleep(1) # Add delay between instructions
