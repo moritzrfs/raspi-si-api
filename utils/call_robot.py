@@ -5,8 +5,10 @@ stop_flag = False
 
 def action():
     robot = driving_logic.Robot()
-    while not stop_flag:
-        robot.execute_instructions('instructions.json')
-    
-    print("STOPPPED")
-    robot.cleanup()
+    robot.execute_instructions('instructions.json')
+    while True:
+        if stop_flag:
+            print("Stopping robot")
+            robot.cleanup()
+            break
+        time.sleep(0.1)

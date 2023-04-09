@@ -18,23 +18,15 @@ app = FastAPI()
 
 API_KEY = os.environ.get("API_KEY")
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+stop_flag = False
+robot = None
 
 async def api_key_verification(api_key_header: str = Depends(api_key_header)):
     if api_key_header is None or api_key_header != API_KEY:
         raise HTTPException(status_code=HTTP_403_FORBIDDEN, detail="Invalid API key")
     return api_key_header
 
-# @app.get("/protected")
-# async def protected_route(api_key: APIKey = Depends(api_key_verification)):
-#     return {"message": "This route is protected"}
 
-# @app.get("/")
-# async def public_route():
-#     return {"message": "This route is public"}
-
-# @app.get("/var/")
-# async def get_var():
-#     return os.environ.get("ANOTHER_VAR")
 
 @app.post("/start/")
 async def start_robot(api_key: APIKey = Depends(api_key_verification)):
@@ -47,7 +39,6 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     """
     t = threading.Thread(target=action)
     t.start()
-
     return {"message": "Robot started."}
 
 @app.post("/my_endpoint")
@@ -96,12 +87,9 @@ async def stop_robot(api_key: APIKey = Depends(api_key_verification)):
     If it is not running, it will return a message saying so.
     If it is running, it will stop the robot and return a message saying so.
     """
-    # if kill_proc('called_script.py'):
-    #     return {"message": "Robot stopped."}
-    # else:
-    #     return {"message": "Robot not running."}
     global stop_flag
     stop_flag = True
+    return {"message": "Robot stopped."}
 
 @app.get("/status/")
 async def get_status(api_key: APIKey = Depends(api_key_verification)):
