@@ -59,7 +59,6 @@ class Robot:
 
     def how_long(self, seconds):
         self.start_time = time.time()
-        print("Start time: ", self.start_time)
         while True:
             current_time = time.time()
             elapsed_time = current_time - self.start_time
@@ -73,6 +72,7 @@ class Robot:
             instructions = json.load(f)
         for instruction in instructions['instructions']:
             action = instruction['action']
+            print("Executing action: ", action)
             if action == 'drive_straight':
                 self.drive_straight(instruction['seconds'])
             elif action == 'drive_backwards':
