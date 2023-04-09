@@ -4,7 +4,7 @@ from starlette.status import HTTP_403_FORBIDDEN
 import os
 import json
 from typing import Union
-# from utils.call_robot import action
+from utils.call_robot import action
 
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
