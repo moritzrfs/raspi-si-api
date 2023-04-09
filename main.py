@@ -5,6 +5,7 @@ import os
 import json
 from typing import Union
 from utils.call_robot import action
+import threading
 
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
@@ -44,13 +45,9 @@ async def start_robot(api_key: APIKey = Depends(api_key_verification)):
     If it is already running, it will return a message saying so.
     If it is not running, it will start the robot and return a message saying so.
     """
+    t = threading.Thread(target=action)
+    t.start()
 
-    # if is_process_running('called_script.py'):
-    #     return {"message": "Robot already running."}
-    # else:
-    #     await start_proc('called_script.py')
-    #     return {"message": "Robot started."}
-    action()
     return {"message": "Robot started."}
 
 @app.post("/my_endpoint")
