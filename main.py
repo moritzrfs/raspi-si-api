@@ -8,7 +8,6 @@ from utils.call_robot import action
 import threading
 from utils.proc_actions import start_proc, kill_proc, is_process_running
 from utils.call_shell import run_command
-from utils.upload_file import save_file
 '''
 Start with the following command:
 uvicorn main:app --reload
@@ -103,8 +102,9 @@ async def get_status(api_key: APIKey = Depends(api_key_verification)):
 
 #     filename = await save_file(file)
 #     return {"filename": filename}
+
 @app.post("/uploadfile/")
-async def create_upload_file(file: UploadFile = File(...), api_key: APIKey = Depends(api_key_verification)):
+async def create_upload_file(file: Union[UploadFile, None] = None, api_key: APIKey = Depends(api_key_verification)):
     """
     Upload a JSON driving instructions file.
 
@@ -124,5 +124,11 @@ async def create_upload_file(file: UploadFile = File(...), api_key: APIKey = Dep
     except (json.JSONDecodeError, UnicodeDecodeError):
         raise HTTPException(status_code=400, detail="Invalid file encoding. Only UTF-8 encoded JSON files are allowed.")
 
-    file_path = await save_file(file)
-    return {"message": f"File saved at {file_path}."}
+    file_path = "tmp/driving_instructions/instructions.json"
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    with open(file_path, "wb") as buffer:
+        buffer.write(contents)
+
+    return {"filename": file.filename}
